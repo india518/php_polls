@@ -4,8 +4,6 @@ class Poll extends CI_Controller {
 
 	public function index()
 	{
-		echo "Hello, this is the Poll controller index function";
-
 		$this->load->model('Poll_model','',TRUE);
 		$data["polls"] = $this->Poll_model->get_all_polls();
 
@@ -15,6 +13,16 @@ class Poll extends CI_Controller {
 		// die();
 
 		$this->load->view('polls_all', $data);
+	}
+
+	public function add()
+	{
+		$this->load->view('add_poll');
+	}
+
+	public function process_poll_form()
+	{
+		echo "you made it to process_poll_form!";
 	}
 }
 
