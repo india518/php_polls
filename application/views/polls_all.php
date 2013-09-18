@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Poll List</title>
+		<link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 	</head>
 	<body>
 		<!-- button to add poll -->

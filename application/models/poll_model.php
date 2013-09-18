@@ -14,18 +14,20 @@ class Poll_model extends CI_model {
         return $query->result();
     }
 
-    // function create_poll()
-    // {
-    //     $this->title		= $_POST['title'];
-    //     $this->description	= $_POST['description'];
-    //     $this->option1		= $_POST['option1'];
-    //     $this->option2		= $_POST['option2'];
-    //     $this->option3		= $_POST['option3'];
-    //     $this->option4		= $_POST['option4'];
-    //     $this->created_at	= time();
+    function create_poll($poll)
+    {
+    	//NOTE: $config['global_xss_filtering'] = TRUE;
+        $this->title		= $_POST['title'];
+        $this->description	= $_POST['description'];
+        $this->option1		= $_POST['option1'];
+        $this->option2		= $_POST['option2'];
+        $this->option3		= $_POST['option3'];
+        $this->option4		= $_POST['option4'];
+        //this is a way to get the datetime into SQL:
+        $this->db->set('created_at', 'NOW()', FALSE);
 
-    //     $this->db->insert('polls', $this);
-    // }
+        return $this->db->insert('polls', $this);
+    }
 
     // function update_entry()
     // {
