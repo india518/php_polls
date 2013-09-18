@@ -51,6 +51,11 @@ class Poll extends CI_Controller {
 			}
 		}
 	}
+
+	public function process_vote()
+    {
+        echo "This is the process_vote function!";
+    }
 }
 
 // end of file

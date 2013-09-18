@@ -14,7 +14,7 @@
 		foreach ($polls as $poll)
 		{
 			// echo "<pre>";
-			// var_dump($user);
+			// var_dump($poll);
 			// echo "</pre>";
 ?>
 			<div class="container">
@@ -24,6 +24,7 @@
 					<p><?= $poll->description ?></p>
 					<form id="poll_<?= $poll->id ?>" action="poll/process_vote" method="post">
 						<!-- radio buttons for options -->
+
 						<button type="submit" class="btn btn-primary pull-right">submit</button>
 					</form>
 				</div>

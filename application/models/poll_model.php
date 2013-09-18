@@ -10,28 +10,55 @@ class Poll_model extends CI_model {
 
     function get_all_polls()
     {
+        $this->db->order_by('id', 'desc');
         $query = $this->db->get('polls');
+        //var_dump($query);
         return $query->result();
     }
 
     function create_poll($poll)
     {
     	//NOTE: $config['global_xss_filtering'] = TRUE;
-        $this->title		= $_POST['title'];
-        $this->description	= $_POST['description'];
-        $this->option1		= $_POST['option1'];
-        $this->option2		= $_POST['option2'];
-        $this->option3		= $_POST['option3'];
-        $this->option4		= $_POST['option4'];
+
+    	//make poll first
+        $new_poll['title'] = $_POST['title'];
+        $new_poll['description'] = $_POST['description'];
         //this is a way to get the datetime into SQL:
         $this->db->set('created_at', 'NOW()', FALSE);
+        $status = $this->db->insert('polls', $new_poll);
+        $poll_id = $this->db->insert_id();
 
-        return $this->db->insert('polls', $this);
+        //now, make our 'options' objects
+        if ($status)
+        {
+        	if ((isset($_POST['option1'])) && (!empty($_POST['option1'])))
+			{
+				$this->create_option($_POST['option1'], $poll_id);
+			}
+			if ((isset($_POST['option2'])) && (!empty($_POST['option2'])))
+			{
+				$this->create_option($_POST['option2'], $poll_id);
+			}
+			if ((isset($_POST['option3'])) && (!empty($_POST['option3'])))
+			{
+				$this->create_option($_POST['option3'], $poll_id);
+			}
+			if ((isset($_POST['option4'])) && (!empty($_POST['option4'])))
+			{
+				$this->create_option($_POST['option4'], $poll_id);
+			}
+        }
+        
+        return $status;
     }
 
-    function process_vote()
+    function create_option($name, $poll_id)
     {
-        echo "This is the process_vote function!";
+    	$new_option['poll_id'] = $poll_id;
+    	$new_option['name'] = $name;
+    	$new_option['votes'] = 0; //since we are creating, not updating
+    	$this->db->set('created_at', 'NOW()', FALSE);
+    	return $this->db->insert('options', $new_option);
     }
 
 }
