@@ -44,7 +44,9 @@
 				<!-- TODO: Insert link (class="btn btn-danger") to cancel poll -->
 				<div class="control-group">
 					<div class="controls">
-						<a href="" class="btn btn-danger">Cancel</a>
+						<!-- href links to the function inside the controller
+						we want. TODO: better to use base_url for this? -->
+						<a href="index" class="btn btn-danger">Cancel</a>
 						<button type="submit" class="btn btn-primary pull-right">Add Poll</button>
 					</div>
 				</div>
