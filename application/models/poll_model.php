@@ -16,6 +16,13 @@ class Poll_model extends CI_model {
         return $query->result();
     }
 
+    function get_poll_options($poll)
+    {
+    	$this->db->where('poll_id', $poll['id']);
+    	$query = $this->db->get('options');
+    	return $query->result();
+    }
+
     function create_poll($poll)
     {
     	//NOTE: $config['global_xss_filtering'] = TRUE;
