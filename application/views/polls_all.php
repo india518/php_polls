@@ -1,10 +1,13 @@
+<?php
+	require('application/helpers/html_helpers.php');
+?>
 <!doctype html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<title>Poll List</title>
-	<link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-	<link href="../assets/css/mycss.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="assets/css/mycss.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 	<div id="wrapper" class="container">
@@ -12,11 +15,7 @@
 		<a href="poll/add" class="btn" id="add_redirect">Add a Poll</a>
 <?php
 		foreach ($polls as $poll)
-		{
-			// echo "<pre>";
-			// var_dump($poll);
-			// echo "</pre>";
-?>
+		{	?>
 			<div class="container">
 				<p class="pull-right">ID: <?= $poll->id ?></p>
 				<div class="well">
@@ -28,10 +27,10 @@
 							<!-- TODO: Can we improve the CSS styling on this? -->
 							<!-- Look into bootstrap docs on radio buttons! -->
 <?php 						foreach($options[$poll->id] as $option)
-    						{	?>
-            					<input type="radio" name="vote" value="<?= $option->id ?>" />
-            					<label for="vote"><?= $option->name ?></label>
-<?php     					}	?>
+							{	?>
+								<input type="radio" name="vote" value="<?= $option->id ?>" />
+								<label for="vote"><?= $option->name ?></label>
+<?php						}	?>
 						</div>
 						<!-- this tells us which poll is being voted on -->
 						<input type="hidden" name="poll_id" value="<?= $poll->id ?>" />
@@ -39,10 +38,11 @@
 					</form>
 				</div>
 				<div id="results_poll_<?= $poll->id ?>">
-					<!-- call function to calc vote results -->
+					<!-- call functions to calc vote results -->
+					<?=	print_results_table($options[$poll->id]) ?>
 				</div>
 			</div>
-<?php	}?>
+<?php	}	?>
 	</div>
 </body>
 </html>

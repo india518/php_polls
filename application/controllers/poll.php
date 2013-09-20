@@ -35,7 +35,7 @@ class Poll extends CI_Controller {
 		// the data from our form is in $this->input->post();
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('title', 'Title', 'required');
-		$this->form_validation->set_rules('options[0]', 'first option field', 'required');
+		$this->form_validation->set_rules('options[0]', 'first Option', 'required');
 
 		if($this->form_validation->run() === FALSE)
 		{
@@ -64,12 +64,12 @@ class Poll extends CI_Controller {
 
 	public function process_vote()
     {
-    	echo "<pre>";
-		var_dump($_POST);
-		echo "</pre>";
+  //   	echo "<pre>";
+		// var_dump($_POST);
+		// echo "</pre>";
         echo "This is the process_vote function!";
         echo "The poll id is: {$_POST['poll_id']}";
-        echo "The vote was for {$_POST[vote]}";
+        echo "The vote was for {$_POST['vote']}";
     }
 }
 
