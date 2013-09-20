@@ -25,8 +25,6 @@ class Poll_model extends CI_model {
     function create_poll($poll)
     {
     	//NOTE: $config['global_xss_filtering'] = TRUE;
-
-    	//make poll first
         $new_poll['title'] = $_POST['title'];
         $new_poll['description'] = $_POST['description'];
         //this is a way to get the datetime into SQL:
@@ -34,18 +32,33 @@ class Poll_model extends CI_model {
         $status = $this->db->insert('polls', $new_poll);
         $poll_id = $this->db->insert_id();
 
-        //now, make our 'options' objects
         if ($status)
         {
-        	foreach(($_POST['options']) as $option)
+        	$options_status = $this->create_poll_options($_POST['options'], $poll_id);
+        }
+        return ($status && $options_status);
+    }
+
+    function create_poll_options($options, $poll_id)
+    {
+    	$status = Array();
+
+    	foreach($options as $option)
+        {
+        	if ((isset($option)) && (!empty($option)))
         	{
-        		if ((isset($option)) && (!empty($option)))
-        		{
-        			$this->create_option($option1, $poll_id);
-        		}
+        		$status[$option] = $this->create_option($option, $poll_id);
         	}
         }
-        return $status;
+
+        if (in_array(FALSE, $status))
+        {
+        	return FALSE;
+        }
+        else
+        {
+        	return TRUE;
+        }
     }
 
     function create_option($name, $poll_id)

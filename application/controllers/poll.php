@@ -31,10 +31,11 @@ class Poll extends CI_Controller {
 		// echo "<pre>";
 		// var_dump($_POST);
 		// echo "</pre>";
+
 		// the data from our form is in $this->input->post();
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('title', 'Title', 'required');
-		$this->form_validation->set_rules('option1', 'At least one option', 'required');
+		$this->form_validation->set_rules('options[0]', 'first option field', 'required');
 
 		if($this->form_validation->run() === FALSE)
 		{
