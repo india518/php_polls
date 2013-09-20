@@ -63,7 +63,7 @@
 				<div class="controls">
 					<!-- href links to the function inside the controller
 					we want. TODO: better to use base_url for this? -->
-					<a href="index" class="btn btn-danger">Cancel</a>
+					<a href="<?= base_url() ?>" class="btn btn-danger">Cancel</a>
 					<button type="submit" value="test_value" class="btn btn-primary pull-right">Add Poll</button>
 				</div>
 			</div>

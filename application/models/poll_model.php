@@ -10,10 +10,7 @@ class Poll_model extends CI_model {
 
     function get_all_polls()
     {
-        $this->db->order_by('id', 'desc');
-        $query = $this->db->get('polls');
-        //var_dump($query);
-        return $query->result();
+        return $this->db->order_by('id', 'desc')->get('polls')->result();
     }
 
     //NOTE: We only really need the poll id!
