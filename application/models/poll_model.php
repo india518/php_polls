@@ -64,6 +64,17 @@ class Poll_model extends CI_model {
     	return $this->db->set('created_at', 'NOW()', FALSE)->insert('options', $new_option);
     }
 
+    //Voting functions!
+    function get_option($id)
+    {
+    	return $this->db->where('id', $id)->get('options')->result();
+    }
+
+    function update_option($id)
+    {
+    	return $this->db->update('options', $option, array('id' => $id);
+    }
+
 }
 
 //end of file

@@ -28,7 +28,7 @@
 							<!-- Look into bootstrap docs on radio buttons! -->
 <?php 						foreach($options[$poll->id] as $option)
 							{	?>
-								<input type="radio" name="vote" value="<?= $option->id ?>" />
+								<input type="radio" name="option_id" value="<?= $option->id ?>" />
 								<label for="vote"><?= $option->name ?></label>
 <?php						}	?>
 						</div>

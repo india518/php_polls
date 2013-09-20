@@ -27,12 +27,7 @@ class Poll extends CI_Controller {
 	}
 
 	public function process_poll_form()
-	{
-		// echo "<pre>";
-		// var_dump($_POST);
-		// echo "</pre>";
-
-		// the data from our form is in $this->input->post();
+	{	// the data from our form is in $this->input->post();
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('title', 'Title', 'required');
 		$this->form_validation->set_rules('options[0]', 'first Option', 'required');
@@ -64,12 +59,18 @@ class Poll extends CI_Controller {
 
 	public function process_vote()
     {
-  //   	echo "<pre>";
+    	$this->load->model('Poll_model');
+		// echo "<pre>";
 		// var_dump($_POST);
 		// echo "</pre>";
-        echo "This is the process_vote function!";
-        echo "The poll id is: {$_POST['poll_id']}";
-        echo "The vote was for {$_POST['vote']}";
+  //       echo "This is the process_vote function!";
+  //       echo "The poll id is: {$_POST['poll_id']}";
+  //       echo "The vote was for option {$_POST['option_id']}";
+        //first, find option in database
+        $option = $this->Poll_model->get_option($_POST['option_id']);
+        // update option by increasing vote count by one
+        $status = $this->Poll_model->update_option($option);
+        // return status of update operation
     }
 }
 
