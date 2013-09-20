@@ -24,9 +24,7 @@ class Poll_model extends CI_model {
     	//NOTE: $config['global_xss_filtering'] = TRUE;
         $new_poll['title'] = $_POST['title'];
         $new_poll['description'] = $_POST['description'];
-        //this is a way to get the datetime into SQL:
-        $this->db->set('created_at', 'NOW()', FALSE);
-        $status = $this->db->insert('polls', $new_poll);
+        $status = $this->db->set('created_at', 'NOW()', FALSE)->insert('polls', $new_poll);
         $poll_id = $this->db->insert_id();
 
         if ($status)
@@ -63,8 +61,7 @@ class Poll_model extends CI_model {
     	$new_option['poll_id'] = $poll_id;
     	$new_option['name'] = $name;
     	$new_option['votes'] = 0; //since we are creating, not updating
-    	$this->db->set('created_at', 'NOW()', FALSE);
-    	return $this->db->insert('options', $new_option);
+    	return $this->db->set('created_at', 'NOW()', FALSE)->insert('options', $new_option);
     }
 
 }
