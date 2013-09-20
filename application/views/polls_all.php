@@ -25,11 +25,11 @@
 					<form id="poll_<?= $poll->id ?>" action="poll/process_vote" method="post">
 						<!-- radio buttons for options -->
 <?php
-						$options = $this->get_poll_options($poll);
-						foreach ($options as $option)
-						{	?>
-							<input type="radio" name="poll_<?= $poll->id ?>_vote" value="<?= $option->name ?>" />
->?php					}	?>
+						foreach($options[$poll->id] as $option)
+    					{
+            				echo $option->name;
+     					}
+?>
 						<button type="submit" class="btn btn-primary pull-right">submit</button>
 					</form>
 				</div>

@@ -16,11 +16,10 @@ class Poll_model extends CI_model {
         return $query->result();
     }
 
-    function get_poll_options($poll)
+    //NOTE: We only really need the poll id!
+    function get_poll_options($id)
     {
-    	$this->db->where('poll_id', $poll['id']);
-    	$query = $this->db->get('options');
-    	return $query->result();
+    	return $this->db->where('poll_id', $id)->get('options')->result();
     }
 
     function create_poll($poll)
@@ -38,24 +37,14 @@ class Poll_model extends CI_model {
         //now, make our 'options' objects
         if ($status)
         {
-        	if ((isset($_POST['option1'])) && (!empty($_POST['option1'])))
-			{
-				$this->create_option($_POST['option1'], $poll_id);
-			}
-			if ((isset($_POST['option2'])) && (!empty($_POST['option2'])))
-			{
-				$this->create_option($_POST['option2'], $poll_id);
-			}
-			if ((isset($_POST['option3'])) && (!empty($_POST['option3'])))
-			{
-				$this->create_option($_POST['option3'], $poll_id);
-			}
-			if ((isset($_POST['option4'])) && (!empty($_POST['option4'])))
-			{
-				$this->create_option($_POST['option4'], $poll_id);
-			}
+        	foreach(($_POST['options']) as $option)
+        	{
+        		if ((isset($option)) && (!empty($option)))
+        		{
+        			$this->create_option($option1, $poll_id);
+        		}
+        	}
         }
-        
         return $status;
     }
 

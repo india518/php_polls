@@ -4,22 +4,30 @@ class Poll extends CI_Controller {
 
 	public function index()
 	{
-		$this->load->model('Poll_model','',TRUE);
+		$this->load->model('Poll_model');
 		$data['polls'] = $this->Poll_model->get_all_polls();
 
 		// I want to go through every poll in the $data['polls'] array,
 		// fetch their associated options, and store them. Why can't I 
-		// seem to do that? 
+		// seem to do that?
 
-		for ($i=0; $i < count($data['polls']); $i++)
+		//NOTE: use foreach - (Never use for loop!)
+		$option = Array();
+
+		foreach($data['polls'] as $poll)
 		{
-			$data['polls'][$i]['options'] = $this->Poll_model->get_poll_options($data['polls'][$i]);
+		    $data['options'][$poll->id] = $this->Poll_model->get_poll_options($poll->id);
 		}
 
-		echo "<pre>";
-		var_dump($data);
-		echo "</pre>";
-		die();
+		// for ($i=0; $i < count($data['polls']); $i++)
+		// {
+		// 	$data['polls'][$i]['options'] = $this->Poll_model->get_poll_options($data['polls'][$i]);
+		// }
+
+		// echo "<pre>";
+		// var_dump($data);
+		// echo "</pre>";
+		// die();
 
 		$this->load->view('polls_all', $data);
 	}
@@ -31,6 +39,9 @@ class Poll extends CI_Controller {
 
 	public function process_poll_form()
 	{
+		// echo "<pre>";
+		// var_dump($_POST);
+		// echo "</pre>";
 		// the data from our form is in $this->input->post();
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('title', 'Title', 'required');
