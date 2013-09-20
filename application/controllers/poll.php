@@ -63,14 +63,24 @@ class Poll extends CI_Controller {
 		// echo "<pre>";
 		// var_dump($_POST);
 		// echo "</pre>";
-  //       echo "This is the process_vote function!";
-  //       echo "The poll id is: {$_POST['poll_id']}";
-  //       echo "The vote was for option {$_POST['option_id']}";
         //first, find option in database
         $option = $this->Poll_model->get_option($_POST['option_id']);
+
         // update option by increasing vote count by one
+        $option->votes = ($option->votes) + 1;
+
         $status = $this->Poll_model->update_option($option);
         // return status of update operation
+        if ($status)
+		{
+			redirect(base_url());
+		}
+		else
+		{
+			$error_messages["vote"] = "There was a problem adding your vote to the poll.";
+			$this->session->set_userdata('error_messages', $error_messages);
+			redirect(base_url());
+		}
     }
 }
 

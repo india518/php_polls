@@ -67,12 +67,13 @@ class Poll_model extends CI_model {
     //Voting functions!
     function get_option($id)
     {
-    	return $this->db->where('id', $id)->get('options')->result();
+    	//return $this->db->where('id', $id)->get('options')->result();
+    	return $this->db->where('id', $id)->get('options')->row();
     }
 
-    function update_option($id)
+    function update_option($option)
     {
-    	return $this->db->update('options', $option, array('id' => $id);
+    	return $this->db->where('id', $option->id)->update('options', $option);
     }
 
 }
