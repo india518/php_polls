@@ -1,3 +1,7 @@
+.radio_buttons input{
+	float: left;
+}
+
 legend.span3 {
 	margin: 0px;
 	padding: 0px;

@@ -22,14 +22,19 @@
 				<div class="well">
 					<h4><?= $poll->title ?></h4>
 					<p><?= $poll->description ?></p>
-					<form id="poll_<?= $poll->id ?>" action="poll/process_vote" method="post">
+					<form id="poll_<?= $poll->id ?>" class="poll_display" action="poll/process_vote" method="post">
 						<!-- radio buttons for options -->
-<?php
-						foreach($options[$poll->id] as $option)
-    					{
-            				echo $option->name;
-     					}
-?>
+						<div class="radio_buttons">
+							<!-- TODO: Can we improve the CSS styling on this? -->
+							<!-- Look into bootstrap docs on radio buttons! -->
+<?php 						foreach($options[$poll->id] as $option)
+    						{	?>
+            					<input type="radio" name="vote" value="<?= $option->id ?>" />
+            					<label for="vote"><?= $option->name ?></label>
+<?php     					}	?>
+						</div>
+						<!-- this tells us which poll is being voted on -->
+						<input type="hidden" name="poll_id" value="<?= $poll->id ?>" />
 						<button type="submit" class="btn btn-primary pull-right">submit</button>
 					</form>
 				</div>

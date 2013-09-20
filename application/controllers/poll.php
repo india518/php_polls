@@ -7,23 +7,12 @@ class Poll extends CI_Controller {
 		$this->load->model('Poll_model');
 		$data['polls'] = $this->Poll_model->get_all_polls();
 
-		// I want to go through every poll in the $data['polls'] array,
-		// fetch their associated options, and store them. Why can't I 
-		// seem to do that?
-
-		//NOTE: use foreach - (Never use for loop!)
 		$option = Array();
 
 		foreach($data['polls'] as $poll)
 		{
 		    $data['options'][$poll->id] = $this->Poll_model->get_poll_options($poll->id);
 		}
-
-		// for ($i=0; $i < count($data['polls']); $i++)
-		// {
-		// 	$data['polls'][$i]['options'] = $this->Poll_model->get_poll_options($data['polls'][$i]);
-		// }
-
 		// echo "<pre>";
 		// var_dump($data);
 		// echo "</pre>";
@@ -55,7 +44,7 @@ class Poll extends CI_Controller {
 		}
 		else
 		{	//add poll to database
-			$this->load->model('Poll_model','',TRUE);
+			$this->load->model('Poll_model');
 			$poll = $this->input->post();
 			$status = $this->Poll_model->create_poll($poll);
 			
@@ -74,7 +63,12 @@ class Poll extends CI_Controller {
 
 	public function process_vote()
     {
+    	echo "<pre>";
+		var_dump($_POST);
+		echo "</pre>";
         echo "This is the process_vote function!";
+        echo "The poll id is: {$_POST['poll_id']}";
+        echo "The vote was for {$_POST[vote]}";
     }
 }
 
