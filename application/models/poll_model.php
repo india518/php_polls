@@ -22,7 +22,7 @@ class Poll_model extends CI_model {
     	return $this->db->where('poll_id', $id)->get('options')->result();
     }
 
-    function create_poll($poll)
+    function create_poll($poll, $options)
     {
     	//NOTE: $config['global_xss_filtering'] = TRUE;
         $poll['created_at'] = date("Y-m-d H:i:s");
@@ -31,7 +31,7 @@ class Poll_model extends CI_model {
 
         if ($add_poll)
         {
-        	$add_options = $this->create_poll_options($_POST['options'], $poll_id);
+        	$add_options = $this->create_poll_options($options, $poll_id);
             if ($add_options)
             {
                 return TRUE;

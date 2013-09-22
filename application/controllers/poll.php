@@ -59,8 +59,17 @@ class Poll extends CI_Controller {
 		else
 		{	//add poll to database
 			$this->load->model('Poll_model');
-			$poll = $this->input->post();
-			$poll_is_created = $this->Poll_model->create_poll($poll);
+
+			//
+			//NOTE: This will not work because we have the 'options' fields as well!
+			//$poll = $this->input->post();
+
+			//We need to separate things out:
+			$poll['title'] = $this->input->post('title');
+			$poll['description'] = $this->input->post('description');
+			$options = $this->input->post('options');
+			
+			$poll_is_created = $this->Poll_model->create_poll($poll, $options);
 			
 			if ($poll_is_created)
 			{
