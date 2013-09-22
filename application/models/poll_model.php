@@ -4,7 +4,6 @@ class Poll_model extends CI_model {
 
 	function __construct()
     {
-        // Call the Model constructor
         parent::__construct();
     }
 
@@ -13,7 +12,11 @@ class Poll_model extends CI_model {
         return $this->db->order_by('id', 'desc')->get('polls')->result();
     }
 
-    //NOTE: We only really need the poll id!
+    // function get_poll($id)
+    // {
+    //     return $this->db->where('id', $id)->get('polls')->row();
+    // }
+
     function get_poll_options($id)
     {
     	return $this->db->where('poll_id', $id)->get('options')->result();
@@ -22,16 +25,20 @@ class Poll_model extends CI_model {
     function create_poll($poll)
     {
     	//NOTE: $config['global_xss_filtering'] = TRUE;
-        $new_poll['title'] = $_POST['title'];
-        $new_poll['description'] = $_POST['description'];
-        $status = $this->db->set('created_at', 'NOW()', FALSE)->insert('polls', $new_poll);
+        $poll['created_at'] = date("Y-m-d H:i:s");
+        $add_poll = $this->db->insert('polls', $poll);
         $poll_id = $this->db->insert_id();
 
-        if ($status)
+        if ($add_poll)
         {
-        	$options_status = $this->create_poll_options($_POST['options'], $poll_id);
+        	$add_options = $this->create_poll_options($_POST['options'], $poll_id);
+            if ($add_options)
+            {
+                return TRUE;
+            }
         }
-        return ($status && $options_status);
+
+        return FALSE;
     }
 
     function create_poll_options($options, $poll_id)
@@ -41,27 +48,23 @@ class Poll_model extends CI_model {
     	foreach($options as $option)
         {
         	if ((isset($option)) && (!empty($option)))
-        	{
         		$status[$option] = $this->create_option($option, $poll_id);
-        	}
         }
 
         if (in_array(FALSE, $status))
-        {
         	return FALSE;
-        }
         else
-        {
         	return TRUE;
-        }
     }
 
     function create_option($name, $poll_id)
     {
     	$new_option['poll_id'] = $poll_id;
     	$new_option['name'] = $name;
-    	$new_option['votes'] = 0; //since we are creating, not updating
-    	return $this->db->set('created_at', 'NOW()', FALSE)->insert('options', $new_option);
+        //NOTE: leaving 'votes' blank will save space in the database, so we do not set it
+        $new_option['created_at'] = date("Y-m-d H:i:s"); //alternate way to set date
+        return $this->db->insert('options', $new_option);
+        //return $this->db->set('created_at', 'NOW()', FALSE)->insert('options', $new_option);
     }
 
     //Voting functions!
@@ -73,7 +76,20 @@ class Poll_model extends CI_model {
 
     function update_option($option)
     {
+        $option->updated_at = date("Y-m-d H:i:s");
     	return $this->db->where('id', $option->id)->update('options', $option);
+    }
+
+    function total_votes($options)
+    {
+        $total_votes = 0;
+
+        foreach ($options as $option)
+        {
+            $total_votes += $option->votes;
+        }
+
+        return $total_votes;
     }
 
 }

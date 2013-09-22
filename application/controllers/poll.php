@@ -12,11 +12,29 @@ class Poll extends CI_Controller {
 		foreach($data['polls'] as $poll)
 		{
 		    $data['options'][$poll->id] = $this->Poll_model->get_poll_options($poll->id);
+
+		    //
+		    //this is for the percentage of votes for each option:
+		    //
+		    $total_votes = $this->Poll_model->total_votes($data['options'][$poll->id]);
+
+		    foreach($data['options'][$poll->id] as $option)
+		    {
+		    	if ($option->votes == 0)
+		    	{
+		    		$option->percentage = 0;
+		    	}
+		    	else
+		    	{
+					$option->percentage = 100 * ($option->votes / $total_votes);
+		    	}
+		    }
 		}
-		// echo "<pre>";
-		// var_dump($data);
-		// echo "</pre>";
-		// die();
+
+		//NOTE: Question for John. I am assuming that only the controller should
+		// make calls to functions in the model, and all data should be set before
+		// loading the view page. Is that true, or can I call functions in the
+		// model directly from the view?
 
 		$this->load->view('polls_all', $data);
 	}
@@ -34,24 +52,23 @@ class Poll extends CI_Controller {
 
 		if($this->form_validation->run() === FALSE)
 		{
-			$error_messages["new_poll"] = validation_errors();
-			$this->session->set_userdata('error_messages', $error_messages);
+			//$this->session->set_userdata('error_messages', $error_messages);
+			$this->session->set_flashdata('error_messages', validation_errors());
 			redirect(base_url('poll/add'));
 		}
 		else
 		{	//add poll to database
 			$this->load->model('Poll_model');
 			$poll = $this->input->post();
-			$status = $this->Poll_model->create_poll($poll);
+			$poll_is_created = $this->Poll_model->create_poll($poll);
 			
-			if ($status)
+			if ($poll_is_created)
 			{
 				redirect(base_url());
 			}
 			else
 			{
-				$error_messages["new_poll"] = "There was a problem adding your poll to the database.";
-				$this->session->set_userdata('error_messages', $error_messages);
+				$this->session->set_flashdata('error_messages', "There was a problem adding your poll to the database.");
 				redirect(base_url('poll/add'));
 			}
 		}
@@ -60,25 +77,17 @@ class Poll extends CI_Controller {
 	public function process_vote()
     {
     	$this->load->model('Poll_model');
-		// echo "<pre>";
-		// var_dump($_POST);
-		// echo "</pre>";
-        //first, find option in database
         $option = $this->Poll_model->get_option($_POST['option_id']);
+        $option->votes = ($option->votes) + 1; //update the vote count
+        $update_vote_count = $this->Poll_model->update_option($option);
 
-        // update option by increasing vote count by one
-        $option->votes = ($option->votes) + 1;
-
-        $status = $this->Poll_model->update_option($option);
-        // return status of update operation
-        if ($status)
+        if ($update_vote_count)
 		{
 			redirect(base_url());
 		}
 		else
 		{
-			$error_messages["vote"] = "There was a problem adding your vote to the poll.";
-			$this->session->set_userdata('error_messages', $error_messages);
+			$this->session->set_flashdata('error_messages', "There was a problem adding your vote to the poll.");
 			redirect(base_url());
 		}
     }

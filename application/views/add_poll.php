@@ -8,23 +8,12 @@
 </head>
 <body>
 	<div id="wrapper" class="container">
-<?php 		
-		if ($this->session->userdata("error_messages"))
-		{	
-			$error_messages = $this->session->userdata("error_messages");
-?>
-			<div id="display_messages" class="alert alert-block alert-error">
-				<p><?= $error_messages["new_poll"] ?></p>
-			</div><!-- closes the alert block -->
-<?php		
-			//We've displayed them, now unset them
-			$this->session->unset_userdata("error_messages");
-		}	
-		else
-		{
-			$error_messages = FALSE;
-		}
-?>
+<?php 	if($this->session->flashdata('error_messages') != NULL)
+		{	?>
+		<div id="display_messages" class="alert alert-block alert-error">
+			<p><?= $this->session->flashdata('error_messages') ?></p>
+		</div><!-- closes the alert block -->
+<?php	}	?>
 		<form id="add_poll" class="form-horizontal span5" action="/poll/process_poll_form" method="post">
 			<div class="control-group">
 				<div class="controls">
@@ -58,11 +47,8 @@
 					<input class="span3" type="text" name="options[]" id="option4" />
 				</div>
 			</div>
-			<!-- TODO: Insert link (class="btn btn-danger") to cancel poll -->
 			<div class="control-group">
 				<div class="controls">
-					<!-- href links to the function inside the controller
-					we want. TODO: better to use base_url for this? -->
 					<a href="<?= base_url() ?>" class="btn btn-danger">Cancel</a>
 					<button type="submit" value="test_value" class="btn btn-primary pull-right">Add Poll</button>
 				</div>

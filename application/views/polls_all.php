@@ -11,7 +11,12 @@
 </head>
 <body>
 	<div id="wrapper" class="container">
-		<!-- TODO: Add some top/left margin around Add button! -->
+<?php 	if($this->session->flashdata('error_messages') != NULL)
+		{	?>
+		<div id="display_messages" class="alert alert-block alert-error">
+			<p><?= $this->session->flashdata('error_messages') ?></p>
+		</div><!-- closes the alert block -->
+<?php	}	?>
 		<a href="poll/add" class="btn" id="add_redirect">Add a Poll</a>
 <?php
 		foreach ($polls as $poll)
@@ -22,7 +27,6 @@
 					<h4><?= $poll->title ?></h4>
 					<p><?= $poll->description ?></p>
 					<form id="poll_<?= $poll->id ?>" class="poll_display" action="poll/process_vote" method="post">
-						<!-- radio buttons for options -->
 						<div class="radio_buttons">
 							<!-- TODO: Can we improve the CSS styling on this? -->
 							<!-- Look into bootstrap docs on radio buttons! -->
@@ -38,7 +42,6 @@
 					</form>
 				</div>
 				<div id="results_poll_<?= $poll->id ?>">
-					<!-- call functions to calc vote results -->
 					<?=	print_results_table($options[$poll->id]) ?>
 				</div>
 			</div>

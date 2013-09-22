@@ -12,7 +12,7 @@ function print_results_table($options)
 	{
 		$html .= "<tr>";
 		//TODO: result percentage should go below: 
-		$html .= "<td>{$option->votes}: x %</td>";
+		$html .= "<td>{$option->percentage}%</td>";
 		$html .= "<td>{$option->name}</td>";
 		$html .= "</tr>";
 	}
