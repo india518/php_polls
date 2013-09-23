@@ -1,11 +1,10 @@
-<?php
-	require('application/helpers/html_helpers.php');
-?>
 <!doctype html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<title>Poll List</title>
+	<script type="text/javascript" src="assets/js/jquery.1_10_2.js"></script>
+	<script type="text/javascript" src="assets/js/polls.js"></script>
 	<link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 	<link href="assets/css/mycss.css" rel="stylesheet" type="text/css">
 </head>
@@ -40,9 +39,9 @@
 						<input type="hidden" name="poll_id" value="<?= $poll->id ?>" />
 						<button type="submit" class="btn btn-primary pull-right">submit</button>
 					</form>
-				</div>
-				<div id="results_poll_<?= $poll->id ?>">
-					<?=	print_results_table($options[$poll->id]) ?>
+					<div id="results_poll_<?= $poll->id ?>" class="results">
+						<?=	print_results_table($options[$poll->id]) ?>
+					</div>
 				</div>
 			</div>
 <?php	}	?>

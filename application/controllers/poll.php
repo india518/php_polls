@@ -2,6 +2,13 @@
 
 class Poll extends CI_Controller {
 
+	function __construct()
+    {
+        parent::__construct();
+        //loading helper file for our Results table:
+		$this->load->helper('custom_html');
+    }
+
 	public function index()
 	{
 		$this->load->model('Poll_model');
@@ -11,24 +18,17 @@ class Poll extends CI_Controller {
 
 		foreach($data['polls'] as $poll)
 		{
-		    $data['options'][$poll->id] = $this->Poll_model->get_poll_options($poll->id);
+			$data['options'][$poll->id] = $this->Poll_model->get_poll_options($poll->id);
 
-		    //
-		    //this is for the percentage of votes for each option:
-		    //
-		    $total_votes = $this->Poll_model->total_votes($data['options'][$poll->id]);
+			//
+			//this is for the percentage of votes for each option:
+			//
+			$total_votes = $this->total_votes($data['options'][$poll->id]);
 
-		    foreach($data['options'][$poll->id] as $option)
-		    {
-		    	if ($option->votes == 0)
-		    	{
-		    		$option->percentage = 0;
-		    	}
-		    	else
-		    	{
-					$option->percentage = 100 * ($option->votes / $total_votes);
-		    	}
-		    }
+			foreach($data['options'][$poll->id] as $option)
+			{
+				$option->percentage = $this->get_option_percentage($option, $total_votes);
+			}
 		}
 
 		//NOTE: Question for John. I am assuming that only the controller should
@@ -68,7 +68,7 @@ class Poll extends CI_Controller {
 			$poll['title'] = $this->input->post('title');
 			$poll['description'] = $this->input->post('description');
 			$options = $this->input->post('options');
-			
+
 			$poll_is_created = $this->Poll_model->create_poll($poll, $options);
 			
 			if ($poll_is_created)
@@ -84,22 +84,87 @@ class Poll extends CI_Controller {
 	}
 
 	public function process_vote()
-    {
-    	$this->load->model('Poll_model');
-        $option = $this->Poll_model->get_option($_POST['option_id']);
-        $option->votes = ($option->votes) + 1; //update the vote count
-        $update_vote_count = $this->Poll_model->update_option($option);
+	{
+		//Remember that our form data is in $this->input->post()!
+		$this->load->model('Poll_model');
 
-        if ($update_vote_count)
+		$options = $this->Poll_model->get_poll_options($this->input->post('poll_id'));
+
+		$voted_id = $this->input->post('option_id');
+		// We need to get the key that points to the option we voted for
+		// This way, we can update that option in the database, and also
+		// update our options array for redisplaying to the webpage
+		$voted_option_key = $this->get_key_for_voted_option($options, $voted_id);
+		$voted_option = $options[$voted_option_key];
+
+		//There must be a way to find our option in the options array!
+		// Something like this?
+		// $id = $this->input->post('id')
+		// $key = array_search($id, $options)
+		// $voted_option = $options[$key];
+
+		$voted_option->votes = ($voted_option->votes) + 1; //update the vote count
+		$update_vote_action = $this->Poll_model->update_option($voted_option);
+
+		if ($update_vote_action)
 		{
-			redirect(base_url());
+			//redirect(base_url());
+			//First, update $options array
+			$options[$voted_option_key] = $voted_option;
+			//Next, get total votes
+			$total_votes = $this->total_votes($options);
+			//Next, add percentages to each option
+			foreach($options as $option)
+			{
+				$option->percentage = $this->get_option_percentage($option, $total_votes);
+			}
+			//Now put the options in a table and send back to the page
+			$data = Array();
+			$data['html'] = print_results_table($options);
+			echo json_encode($data);
 		}
 		else
 		{
 			$this->session->set_flashdata('error_messages', "There was a problem adding your vote to the poll.");
 			redirect(base_url());
 		}
-    }
+	}
+
+	//NOTE: question for John: Should these functions be in the model, or is it OK 
+	// for them to be in the controller?
+	// I am assuming it is ok in the controller, since it does not interact with the
+	// the database or manipulate the model in any way
+	function total_votes($options)
+	{
+		$total_votes = 0;
+
+		foreach ($options as $option)
+		{
+			$total_votes += $option->votes;
+		}
+
+		return $total_votes;
+	}
+
+	function get_option_percentage($option, $total_votes)
+	{
+		if ($option->votes == NULL)
+			return 0;
+		else
+			return 100 * ($option->votes / $total_votes);
+	}
+
+	function get_key_for_voted_option($options, $id)
+	{
+		foreach($options as $key=>$option)
+		{
+			if ($option->id == $id)
+				return $key;
+		}
+
+		return FALSE; 	//shouldn't happen, since the option itself is used to 
+						// find the options fetched from the database, right?
+	}
 }
 
 // end of file

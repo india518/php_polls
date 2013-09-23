@@ -80,17 +80,17 @@ class Poll_model extends CI_model {
     	return $this->db->where('id', $option->id)->update('options', $option);
     }
 
-    function total_votes($options)
-    {
-        $total_votes = 0;
+    // function total_votes($options)
+    // {
+    //     $total_votes = 0;
 
-        foreach ($options as $option)
-        {
-            $total_votes += $option->votes;
-        }
+    //     foreach ($options as $option)
+    //     {
+    //         $total_votes += $option->votes;
+    //     }
 
-        return $total_votes;
-    }
+    //     return $total_votes;
+    // }
 
 }
 
