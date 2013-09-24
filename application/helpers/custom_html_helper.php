@@ -32,7 +32,7 @@ function print_poll_display($poll, $options)
 		<div class='well'>
 			<h4>{$poll['title']}</h4>
 			<p>{$poll['description']}</p>
-			<form id='poll_{$poll['id']}' class='poll_display' action='poll/process_vote method='post'>
+			<form id='poll_{$poll['id']}' class='poll_display' action='poll/process_vote' method='post'>
 				<div class='radio_buttons'>";
  	foreach($options as $option)
 	{
