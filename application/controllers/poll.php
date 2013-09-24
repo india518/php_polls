@@ -54,31 +54,48 @@ class Poll extends CI_Controller {
 		{
 			//$this->session->set_userdata('error_messages', $error_messages);
 			$this->session->set_flashdata('error_messages', validation_errors());
-			redirect(base_url('poll/add'));
+			//redirect(base_url('poll/add'));
+			redirect(base_url());
 		}
 		else
 		{	//add poll to database
 			$this->load->model('Poll_model');
 
-			//
-			//NOTE: This will not work because we have the 'options' fields as well!
-			//$poll = $this->input->post();
-
-			//We need to separate things out:
+			//We need to separate things out because the input key 'options'
+			// is not part of the poll table:
 			$poll['title'] = $this->input->post('title');
 			$poll['description'] = $this->input->post('description');
-			$options = $this->input->post('options');
-
-			$poll_is_created = $this->Poll_model->create_poll($poll, $options);
+			$poll['id'] = $this->Poll_model->create_poll($poll, $this->input->post('options'));
+			//The create_poll function will return the poll's assigned id
+			// If this gets assigned as a number, it will be 'true'
 			
-			if ($poll_is_created)
+			if ($poll['id'])
 			{
-				redirect(base_url());
+				//because $this->input->post('options') is an array of STRINGS,
+				// we need to query the database again to get the options as arrays
+				// with an 'id':
+				$options = $this->Poll_model->get_poll_options($poll['id']);
+				foreach($options as $option)
+				{
+					$option->percentage = 0; //We're creating the options, so no votes at all yet!
+				}
+				// echo "<pre>";
+				// var_dump($poll);
+				// echo "<br />";
+				// var_dump($options);
+				// echo "</pre>";
+				// die();
+
+				//send the poll/options back to the page
+				$data = Array();
+				$data['html'] = print_poll_display($poll, $options);
+				echo json_encode($data);
 			}
 			else
 			{
 				$this->session->set_flashdata('error_messages', "There was a problem adding your poll to the database.");
-				redirect(base_url('poll/add'));
+				//redirect(base_url('poll/add'));
+				redirect(base_url());
 			}
 		}
 	}

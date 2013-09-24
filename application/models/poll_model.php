@@ -34,7 +34,8 @@ class Poll_model extends CI_model {
         	$add_options = $this->create_poll_options($options, $poll_id);
             if ($add_options)
             {
-                return TRUE;
+                //return TRUE;
+                return $poll_id;
             }
         }
 
@@ -49,6 +50,7 @@ class Poll_model extends CI_model {
         {
         	if ((isset($option)) && (!empty($option)))
         		$status[$option] = $this->create_option($option, $poll_id);
+                
         }
 
         if (in_array(FALSE, $status))
