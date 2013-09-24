@@ -125,7 +125,6 @@ class Poll extends CI_Controller {
 
 		if ($update_vote_action)
 		{
-			//redirect(base_url());
 			//First, update $options array
 			$options[$voted_option_key] = $voted_option;
 			//Next, get total votes

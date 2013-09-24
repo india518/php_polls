@@ -86,7 +86,7 @@
 					</div>
 				</div>
 <?php		}	?>
-		</div>
+		</div><!-- End div id="poll_list" -->
 	</div>
 </body>
 </html>
