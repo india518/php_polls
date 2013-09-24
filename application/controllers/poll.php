@@ -36,13 +36,13 @@ class Poll extends CI_Controller {
 		// loading the view page. Is that true, or can I call functions in the
 		// model directly from the view?
 
-		$this->load->view('polls_all', $data);
+		$this->load->view('polls_index', $data);
 	}
 
-	public function add()
-	{
-		$this->load->view('add_poll');
-	}
+	// public function add()
+	// {
+	// 	$this->load->view('add_poll');
+	// }
 
 	public function process_poll_form()
 	{	// the data from our form is in $this->input->post();
@@ -125,6 +125,8 @@ class Poll extends CI_Controller {
 		}
 		else
 		{
+			//Note that if this fails, it's no longer AJAX: we reload the page to display 
+			// an error
 			$this->session->set_flashdata('error_messages', "There was a problem adding your vote to the poll.");
 			redirect(base_url());
 		}
