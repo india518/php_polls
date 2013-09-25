@@ -11,8 +11,8 @@ function print_results_table($options)
 	foreach($options as $option)
 	{
 		$html .= "<tr>";
-		$html .= "<td>{$option->percentage}%</td>";
-		$html .= "<td>{$option->name}</td>";
+		$html .= "<td>{$option['percentage']}%</td>";
+		$html .= "<td>{$option['name']}</td>";
 		$html .= "</tr>";
 	}
 	$html .= "
@@ -36,8 +36,8 @@ function print_poll_display($poll, $options)
 				<div class='radio_buttons'>";
  	foreach($options as $option)
 	{
-		$html .= "<input type='radio' name='option_id' value='{$option->id}' />";
-		$html .= "<label for='vote'>{$option->name}</label>";
+		$html .= "<input type='radio' name='option_id' value='{$option['id']}' />";
+		$html .= "<label for='vote'>{$option['name']}</label>";
 	}
 	$html .= "
 				</div>
@@ -52,4 +52,5 @@ function print_poll_display($poll, $options)
 	</div>";
 	return $html;
 }
+
 //end of file

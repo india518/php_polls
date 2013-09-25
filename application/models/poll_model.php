@@ -9,32 +9,43 @@ class Poll_model extends CI_model {
 
     function get_all_polls()
     {
-        return $this->db->order_by('id', 'desc')->get('polls')->result();
+        return $this->db->order_by('id', 'desc')->get('polls')->result_array();
     }
 
-    // function get_poll($id)
-    // {
-    //     return $this->db->where('id', $id)->get('polls')->row();
-    // }
-
-    function get_poll_options($id)
+    function get_poll_options($poll_id)
     {
-    	return $this->db->where('poll_id', $id)->get('options')->result();
+    	return $this->db->where('poll_id', $poll_id)->get('options')->result_array();
+    }
+
+    function get_option($option_id)
+    {
+        return $this->db->where('id', $option_id)->get('options')->row_array();
+    }
+
+    function get_total_votes($poll_id)
+    {
+        $total_votes = $this->db->select_sum('votes')->where('poll_id', $poll_id)->get('options')->row_array();
+        //this returns an associative array with a key of 'votes' and a value that is a number in a string
+        //i.e.: array(1) { ["votes"]=> string(1) "5" }
+        return $total_votes["votes"];
     }
 
     function create_poll($poll, $options)
     {
-    	//NOTE: $config['global_xss_filtering'] = TRUE;
+    	//NOTE: always make sure that you set this in config.php:
+        // $config['global_xss_filtering'] = TRUE;
         $poll['created_at'] = date("Y-m-d H:i:s");
-        $add_poll = $this->db->insert('polls', $poll);
+        $poll_created = $this->db->insert('polls', $poll);
+        //$poll_created is a boolean flag that indicates if our SQL
+        // transaction is successful
+
         $poll_id = $this->db->insert_id();
 
-        if ($add_poll)
+        if ($poll_created)
         {
-        	$add_options = $this->create_poll_options($options, $poll_id);
-            if ($add_options)
+        	$options_created = $this->create_poll_options($options, $poll_id);
+            if ($options_created)
             {
-                //return TRUE;
                 return $poll_id;
             }
         }
@@ -44,16 +55,18 @@ class Poll_model extends CI_model {
 
     function create_poll_options($options, $poll_id)
     {
-    	$status = Array();
-
+        //loop through each given option submitted with form, and create a
+        // corresponding entry in the database
     	foreach($options as $option)
         {
         	if ((isset($option)) && (!empty($option)))
-        		$status[$option] = $this->create_option($option, $poll_id);
+        		$option_created[$option] = $this->create_option($option, $poll_id);
                 
         }
 
-        if (in_array(FALSE, $status))
+        // check the $options_created array: if any option was not stored in the
+        // database correctly, then there will be a 'FALSE' in the array.
+        if (in_array(FALSE, $option_created))
         	return FALSE;
         else
         	return TRUE;
@@ -64,35 +77,25 @@ class Poll_model extends CI_model {
     	$new_option['poll_id'] = $poll_id;
     	$new_option['name'] = $name;
         //NOTE: leaving 'votes' blank will save space in the database, so we do not set it
-        $new_option['created_at'] = date("Y-m-d H:i:s"); //alternate way to set date
+        $new_option['created_at'] = date("Y-m-d H:i:s");
         return $this->db->insert('options', $new_option);
-        //return $this->db->set('created_at', 'NOW()', FALSE)->insert('options', $new_option);
-    }
-
-    //Voting functions!
-    function get_option($id)
-    {
-    	//return $this->db->where('id', $id)->get('options')->result();
-    	return $this->db->where('id', $id)->get('options')->row();
     }
 
     function update_option($option)
     {
-        $option->updated_at = date("Y-m-d H:i:s");
-    	return $this->db->where('id', $option->id)->update('options', $option);
+        $option['updated_at'] = date("Y-m-d H:i:s");
+    	return $this->db->where('id', $option['id'])->update('options', $option);
     }
 
-    // function total_votes($options)
-    // {
-    //     $total_votes = 0;
-
-    //     foreach ($options as $option)
-    //     {
-    //         $total_votes += $option->votes;
-    //     }
-
-    //     return $total_votes;
-    // }
+    //This function is for calculating the percentage of votes that an option has,
+    // for a given poll
+    function calculate_percentage($option, $total_votes)
+    {
+        if ($option['votes'] == NULL)
+            return 0;
+        else
+            return 100 * ($option['votes'] / $total_votes);
+    }
 
 }
 
