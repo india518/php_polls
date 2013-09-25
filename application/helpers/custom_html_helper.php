@@ -21,11 +21,11 @@ function print_results_table($options)
 	return $html;
 }
 
-//This is not great looking, and we lose syntax highlighting; is there a better 
-// way to do this than having a helper function construct a huge HTML string?
-//NOTE: $poll is not an 'object' at this point, but $options are.
 function print_poll_display($poll, $options)
 {
+	//Given a poll and the options that belong to that poll, this function
+	// generates the div to display the new poll, the voting form, and
+	// the voting results
 	$html = "
 	<div class='container'>
 		<p class=pull-right>ID: {$poll['id']}</p>

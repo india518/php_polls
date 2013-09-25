@@ -30,7 +30,7 @@ class Poll_model extends CI_model {
         return $total_votes["votes"];
     }
 
-    function create_poll($poll, $options)
+    function create_poll_and_options($poll, $options)
     {
     	//NOTE: always make sure that you set this in config.php:
         // $config['global_xss_filtering'] = TRUE;

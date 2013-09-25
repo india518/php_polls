@@ -68,15 +68,12 @@
 						<p><?= $poll['description'] ?></p>
 						<form id="poll_<?= $poll['id'] ?>" class="poll_display" action="poll/process_vote" method="post">
 							<div class="radio_buttons">
-							<!-- TODO: Can we improve the CSS styling on this? -->
-							<!-- Look into bootstrap docs on radio buttons! -->
 <?php 							foreach($options[$poll['id']] as $option)
 								{	?>
 									<input type="radio" name="option_id" value="<?= $option['id'] ?>" />
 									<label for="vote"><?= $option['name'] ?></label>
 <?php							}	?>
 							</div>
-							<!-- this tells us which poll is being voted on -->
 							<input type="hidden" name="poll_id" value="<?= $poll['id'] ?>" />
 							<button type="submit" class="btn btn-primary pull-right">submit</button>
 						</form>

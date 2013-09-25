@@ -21,11 +21,8 @@ class Poll extends CI_Controller {
 
 		foreach($data['polls'] as $poll)
 		{
+			//get the options for each poll as well as the total votes on that poll
 			$data['options'][$poll['id']] = $this->Poll_model->get_poll_options($poll['id']);
-
-			//
-			//this is for the percentage of votes for each option:
-			//
 			$total_votes = $this->Poll_model->get_total_votes($poll['id']);
 
 			//NOTE: This is important and will be easy to overlook!
@@ -47,7 +44,7 @@ class Poll extends CI_Controller {
 	}
 
 	public function process_poll_form()
-	{	// the data from our form is in $this->input->post();
+	{
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('title', 'Title', 'required');
 		$this->form_validation->set_rules('options[0]', 'first Option', 'required');
@@ -61,18 +58,19 @@ class Poll extends CI_Controller {
 		{
 			$this->load->model('Poll_model');
 
-			//We need to separate things out because the input key 'options'
-			// is not part of the poll database table:
+			//We need to set $poll['title'] and $poll['description'] separately,
+			// because we only want to access some of $this->input->post().
+			// For instance, $this->input->post('options') is not part of the poll
+			// poll entry we want to save in the 'polls' table of the database.
 			$poll['title'] = $this->input->post('title');
 			$poll['description'] = $this->input->post('description');
-			$poll['id'] = $this->Poll_model->create_poll($poll, $this->input->post('options'));
+			$poll['id'] = $this->Poll_model->create_poll_and_options($poll, $this->input->post('options'));
 
-			//The create_poll function will return the poll's assigned id
-			// If this gets assigned as a number, it will be 'true'
 			if ($poll['id'])
 			{
 				//because $this->input->post('options') is an array of STRINGS,
-				// we need to query the database again to get the options as arrays
+				// we need to query the database again to get the options as an
+				// array of arrays
 				$options = $this->Poll_model->get_poll_options($poll['id']);
 				foreach($options as &$option)
 				{
@@ -108,7 +106,7 @@ class Poll extends CI_Controller {
 			$option['percentage'] = $this->Poll_model->calculate_percentage($option, $total_votes);
 		}
 
-		//Now generate the options result table and send back
+		//Now generate the voting result table and send back
 		$data = Array();
 		$data['html'] = print_results_table($options);
 		echo json_encode($data);
